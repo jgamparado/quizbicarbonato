@@ -199,5 +199,99 @@
   <body>
     <div id="root"></div>
 
+  <style id="analysis-polish">
+    /* ── Progress bar: shimmer light sweep ── */
+    .from-slate-700.to-emerald-600 {
+      position: relative;
+      overflow: hidden;
+    }
+    .from-slate-700.to-emerald-600::after {
+      content: '';
+      position: absolute;
+      top: 0; left: -60%; width: 50%; height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,0.28), transparent);
+      animation: bar-shimmer 2s linear infinite;
+      pointer-events: none;
+    }
+    @keyframes bar-shimmer {
+      to { left: 160%; }
+    }
+
+    /* ── Step items: smoother transition ── */
+    .space-y-4 > div {
+      transition: background-color 0.45s ease, border-color 0.45s ease,
+                  opacity 0.45s ease, transform 0.35s ease !important;
+    }
+
+    /* ── Active step: subtle lift ── */
+    .border-emerald-300 {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(16,185,129,0.12) !important;
+    }
+
+    /* ── Notification: slide in from right with spring ── */
+    .animate-fade-in {
+      animation: notif-slide 0.55s cubic-bezier(0.34, 1.56, 0.64, 1) forwards !important;
+    }
+    @keyframes notif-slide {
+      from { opacity: 0; transform: translateX(115%); }
+      to   { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ── Analysis card: fade + rise on mount ── */
+    @keyframes card-enter {
+      from { opacity: 0; transform: translateY(14px); }
+      to   { opacity: 1; transform: translateY(0); }
+    }
+  </style>
+
+  <script id="analysis-smooth-progress">
+  (function () {
+    'use strict';
+    /* Total duration of all 5 analysis steps: 1500+2000+1800+2000+1200 = 8500ms */
+    var TOTAL_MS = 8500;
+    var _bar = null, _start = null, _live = false;
+
+    function easeInOut(t) {
+      return t < 0.5 ? 2 * t * t : 1 - Math.pow(-2 * t + 2, 2) / 2;
+    }
+
+    function tick(ts) {
+      if (!_live) return;
+      if (!_start) _start = ts;
+      var t = (ts - _start) / TOTAL_MS;
+      if (t >= 1) {
+        /* Let React snap to 100% naturally */
+        _live = false;
+        return;
+      }
+      if (_bar) {
+        /* Override React's discrete jumps with a continuous smooth fill */
+        _bar.style.transition = 'none';
+        _bar.style.width = (easeInOut(t) * 97).toFixed(2) + '%';
+      }
+      requestAnimationFrame(tick);
+    }
+
+    /* Watch for the analysis progress bar appearing in the DOM */
+    var obs = new MutationObserver(function () {
+      if (_bar) return;
+      var el = document.querySelector('.from-slate-700.to-emerald-600');
+      if (!el) return;
+      _bar = el;
+      _live = true;
+      obs.disconnect();
+      requestAnimationFrame(tick);
+
+      /* Animate the card entrance */
+      var card = el.closest('.max-w-2xl');
+      if (card) {
+        card.style.animation = 'card-enter 0.5s cubic-bezier(0.4,0,0.2,1) both';
+      }
+    });
+
+    obs.observe(document.body, { childList: true, subtree: true });
+  }());
+  </script>
 
 </body></html>

@@ -3,6 +3,7 @@
     { "source": "/", "destination": "/consulta", "permanent": false }
   ],
   "rewrites": [
-    { "source": "/(.*)", "destination": "/index.html" }
+    { "source": "/consulta", "destination": "/index.html" },
+    { "source": "/consulta/:path*", "destination": "/index.html" }
   ]
 }
