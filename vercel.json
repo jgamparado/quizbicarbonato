@@ -1,5 +1,9 @@
 {
+  "redirects": [
+    { "source": "/", "destination": "/consulta", "permanent": false }
+  ],
   "rewrites": [
+    { "source": "/resulte", "destination": "/resulte/index.html" },
     { "source": "/resulte/(.*)", "destination": "/resulte/index.html" },
     { "source": "/(.*)", "destination": "/index.html" }
   ]
