@@ -2,11 +2,13 @@
   "redirects": [
     { "source": "/", "destination": "/consulta", "permanent": false },
     { "source": "/resulte", "destination": "/consulta/resulte", "permanent": false },
+    { "source": "/resulte/", "destination": "/consulta/resulte", "permanent": false },
     { "source": "/resulte/:path*", "destination": "/consulta/resulte/:path*", "permanent": false }
   ],
   "rewrites": [
     { "source": "/consulta", "destination": "/index.html" },
     { "source": "/consulta/", "destination": "/index.html" },
-    { "source": "/consulta/:path*", "destination": "/index.html" }
+    { "source": "/consulta/:path*", "destination": "/index.html" },
+    { "source": "/consulta/resulte/", "destination": "/index.html" }
   ]
 }
